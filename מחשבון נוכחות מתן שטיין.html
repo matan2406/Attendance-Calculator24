@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מחשבון נוכחות מתן שטיין</title>
+    <style>
+        body {
+            font-family:Guttman Yad-Brush;
+            text-align: center;
+            margin: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+        }
+        .alert {
+            color: rgb(255, 0, 0);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>מחשבון נוכחות</h2>
+        <label>שעת כניסה:</label>
+        <input type="time" id="startTime">
+        
+        <label>שעת יציאה:</label>
+        <input type="time" id="endTime">
+        
+        <button onclick="calculateHours()">חשב שעות</button>
+        
+        <h3>סה"כ שעות עבודה: <span id="totalHours">0</span></h3>
+        <p id="warningMessage" class="alert"></p>
+    </div>
+
+    <script>
+        function calculateHours() {
+            let start = document.getElementById("startTime").value;
+            let end = document.getElementById("endTime").value;
+            let warningMessage = document.getElementById("warningMessage");
+
+            if (!start || !end) {
+                warningMessage.textContent = "אנא הזן את שתי השעות.";
+                return;
+            }
+
+            let startTime = new Date(`2024-01-01T${start}`);
+            let endTime = new Date(`2024-01-01T${end}`);
+
+            if (endTime < startTime) {
+                warningMessage.textContent = "שעת היציאה לא יכולה להיות לפני שעת הכניסה!";
+                return;
+            }
+
+            let diff = (endTime - startTime) / (1000 * 60 * 60); // ממיר למספר שעות
+            document.getElementById("totalHours").textContent = diff.toFixed(2);
+            
+            // זיהוי שעות חריגות
+            if (diff < 3) {
+                warningMessage.textContent = "⚠️ שעות עבודה קצרות מדי (פחות מ-3 שעות)!";
+            } else if (diff > 14) {
+                warningMessage.textContent = "⚠️ שעות עבודה ארוכות מדי (מעל 14 שעות)!";
+            } else {
+                warningMessage.textContent = ""; // אין חריגה
+            }
+        }
+    </script>
+</body>
+</html>
